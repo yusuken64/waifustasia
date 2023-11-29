@@ -1,0 +1,64 @@
+﻿/* Style for the chat bubble */
+.message {
+    border-radius: 15px; /* Rounded corners */
+    padding: 10px; /* Padding inside the bubble */
+    margin-bottom: 10px; /* Spacing between messages */
+    max-width: 70%; /* Maximum width of the chat bubble */
+    word-wrap: break-word; /* Wrap long text */
+    clear: both; /* Ensure proper wrapping of messages */
+}
+
+/* Style for sent messages */
+.sent {
+    background-color: #DCF8C6; /* Light green for sent messages */
+    float: right; /* Align sent messages to the right */
+    clear: both; /* Ensure proper wrapping of messages */
+}
+
+/* Style for received messages */
+.received {
+    background-color: #F8BBD0; /* Light pink for received messages */
+}
+
+/* Style for the timestamp */
+.message small {
+    display: block; /* Display timestamp below the message */
+    color: gray; /* Timestamp color */
+    font-size: 12px; /* Timestamp font size */
+    margin-top: 5px; /* Spacing between message and timestamp */
+}
+
+.sticky-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    bottom: 0;
+    left: 250px;
+    right: 0;
+    padding: 20px;
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+}
+
+.input-wrapper {
+    flex-grow: 1;
+    margin-right: 10px; /* Adjust spacing between input and button as needed */
+}
+
+.sticky-footer input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px; /* Adjust padding as needed */
+}
+
+.sticky-footer button {
+    /* Your button styles */
+}
+
+/* Chat window */
+.chat-window {
+    max-height: calc(100vh - 100px); /* Adjust to accommodate the input area */
+    overflow-y: auto; /* Enable vertical scroll if content exceeds height */
+    padding-bottom: 50px; /* Space for the sticky footer */
+}

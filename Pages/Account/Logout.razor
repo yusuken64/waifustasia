@@ -1,0 +1,15 @@
+﻿@page "/logout"
+
+@using Waifustasia.Data.Authentication;
+
+@inject WaifustasiaAuthenticationStateProvider WaifustasiaAuthenticationStateProvider
+
+<h3>Logout</h3>
+<button type="button" class="btn btn-success" @onclick="LogoutAsync">Logout</button>
+
+@code {
+    public async Task LogoutAsync()
+    {
+        await WaifustasiaAuthenticationStateProvider.LogoutAsync();
+    }
+}

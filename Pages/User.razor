@@ -1,0 +1,52 @@
+﻿@page "/user"
+@using Waifustasia.Data.User;
+
+<PageTitle>Users</PageTitle>
+
+@inject IUserService UserService
+
+<h3>Users</h3>
+
+@if (users == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.DisplayName</td>
+                    <td>@user.Email</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Inject] NavigationManager navigationManager { get; set; }
+    [Inject] Waifustasia.Data.Authentication.WaifustasiaAuthenticationStateProvider WaifustasiaAuthenticationStateProvider { get; set; }
+    private Data.User.User[]? users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = (await UserService.GetAllUsersAsync()).ToArray();
+    }
+
+    void OpenChatWithWaifu(int waifuId)
+    {
+        var userId = WaifustasiaAuthenticationStateProvider.CurrentUser?.Id;
+        navigationManager.NavigateTo($"/chat/{userId}/{waifuId}");
+    }
+}

@@ -1,0 +1,107 @@
+﻿@page "/waifus/new"
+@using Waifustasia.Data.User;
+@using Waifustasia.Data.Waifu;
+@using Waifustasia.WaifuAI;
+
+<h3>Create a New Waifu</h3>
+
+@inject IUserService UserService
+@inject IWaifuService WaifuService
+
+<h3>Waifu</h3>
+
+<AuthorizeView Roles="SuperUser, Admin">
+	<Authorized>
+		<form @onsubmit="CreateWaifu">
+            <div class="container mt-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="waifuName" class="form-label">Name:</label>
+                            <input type="text" class="form-control" id="waifuName" @bind="@waifuName" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="imageUrl" class="form-label">Image (URL or local file path):</label>
+                            <input type="text" class="form-control" id="imageUrl" @bind="@imageUrl" />
+                        </div>
+                        @if (!string.IsNullOrEmpty(imageUrl))
+                        {
+                            <div>
+                                @if (IsImageUrl(imageUrl))
+                                {
+                                    <img src="@imageUrl" alt="Waifu Image" class="img-fluid" style="max-width: 300px; max-height: 300px;" />
+                                }
+                                else
+                                {
+                                    <img src="@(GetLocalImageUrl(imageUrl))" alt="Waifu Image" class="img-fluid" style="max-width: 300px; max-height: 300px;" />
+                                }
+                            </div>
+                        }
+                        <div class="mb-3">
+                            <label for="personalityPrompt" class="form-label">Personality:</label>
+                            <textarea class="form-control" id="personalityPrompt" rows="4" @bind="@personalityPrompt"></textarea>
+                        </div>
+                        <button class="btn btn-primary" @onclick="CreateWaifu">Submit</button>
+                    </div>
+                </div>
+            </div>
+		</form>
+	</Authorized>
+	<NotAuthorized>
+		<p>You are not authorized to access this page.</p>
+	</NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Inject] Waifustasia.Data.Authentication.WaifustasiaAuthenticationStateProvider WaifustasiaAuthenticationStateProvider { get; set; }
+    [Inject] NavigationManager navigationManager { get; set; }
+    [Inject] IImageStore imageStore { get; set; }
+    string waifuName;
+    string imageUrl;
+    string personalityPrompt;
+    bool submitting = false;
+
+    Waifustasia.Data.User.User? creator;
+
+    protected override async Task OnInitializedAsync()
+    {
+        creator = WaifustasiaAuthenticationStateProvider.CurrentUser;
+    }
+
+    async Task CreateWaifu()
+    {
+        if (!submitting)
+        {
+            submitting = true;
+            var waifuCreator = await UserService.GetUserByIdAsync(creator.Id);
+            var newWaifu = new Waifustasia.Data.Waifu.Waifu();
+            newWaifu.Id = Guid.NewGuid().ToString();
+            newWaifu.Creator = waifuCreator;
+            newWaifu.UserId = waifuCreator.Id;
+            newWaifu.Name = waifuName;
+            newWaifu.Score = 0;
+            newWaifu.PersonalityPrompt = personalityPrompt;
+            newWaifu.ImageUrl = await imageStore.SaveImageAsync(imageUrl);
+
+            waifuCreator.CreatedWaifus.Add(newWaifu);
+            await UserService.UpdateUserAsync(waifuCreator);
+
+            //await WaifuService.CreateWaifuAsync(newWaifu);
+        }
+
+        navigationManager.NavigateTo("/waifu");
+    }
+
+    private bool IsImageUrl(string url)
+    {
+        Uri uriResult;
+        return Uri.TryCreate(url, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+    }
+
+    private string GetLocalImageUrl(string localPath)
+    {
+        // Adjust this logic to handle local file paths in your application
+        // For example, if the local path refers to images in a specific folder in your project
+        return $"~/images/{localPath}";
+    }
+}

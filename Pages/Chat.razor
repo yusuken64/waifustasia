@@ -1,0 +1,156 @@
+﻿@page "/chat/{userId}/{waifuId}"
+
+@using Waifustasia.Data.Chat
+@using Waifustasia.Data.Memory;
+@using Waifustasia.Data.User
+@using Waifustasia.Data.Waifu
+
+@inject IChatService chatService
+@inject IUserService userService
+@inject IWaifuService waifuService
+@inject IMemoryService memoryService
+@inject IJSRuntime JSRuntime
+
+<div class="outer-container">
+	@if (chat != null && chat.Messages != null)
+	{
+		<div class="chat-container">
+			<div class="chat-window">
+				@foreach (var message in chat.Messages)
+				{
+					<div class="message @(message.SentByUser ? "sent" : "received")">
+						<p>@message.Content</p>
+						<small>@message.Timestamp.ToString("HH:mm")</small>
+					</div>
+				}
+				@foreach (var message in LocalMessage)
+				{
+					<div class="message @(message.SentByUser ? "sent" : "received")">
+						<p>@message.Content</p>
+						<small>@message.Timestamp.ToString("HH:mm")</small>
+					</div>
+				}
+			</div>
+			<div class="sticky-footer">
+				<div class="input-wrapper">
+					<input type="text" @bind="@newMessageText" />
+				</div>
+				<button disabled="@isSending" @onclick="SendMessageAsync">Send</button>
+				<AuthorizeView Roles="SuperUser, Admin">
+					<Authorized>
+						<button disabled="@isSending" @onclick="GenerateMemoryAsync">Memory</button>
+					</Authorized>
+				</AuthorizeView>
+			</div>
+		</div>
+	}
+	else
+	{
+		<p>Chat not found!</p>
+	}
+</div>
+
+
+<style>
+	.outer-container {
+		max-height: 80vh; /* Limit the height of the outer container */
+		overflow: hidden; /* Hide overflow to prevent scroll on the outer container */
+		display: flex;
+		flex-direction: column;
+	}
+
+	.chat-container {
+		flex: 1; /* Make the chat container occupy remaining vertical space */
+		display: flex;
+		flex-direction: column;
+		overflow: hidden; /* Hide overflow to prevent overlapping */
+	}
+
+	.chat-window {
+		flex: 1; /* Make the chat window flexible to occupy available space */
+		overflow-y: auto; /* Enable vertical scrolling */
+		padding: 10px;
+	}
+
+	.sticky-footer {
+		flex-shrink: 0; /* Prevent footer from shrinking */
+		padding: 10px;
+		background-color: #f0f0f0; /* Adjust background color as needed */
+	}
+</style>
+
+@code {
+	[Parameter] public string UserId { get; set; }
+	[Parameter] public string WaifuId { get; set; }
+
+	string userDisplayName;
+	string waifuName;
+	string waifuImageUrl;
+	string newMessageText = "";
+	bool isSending = false;
+	public Waifustasia.Data.Chat.Chat chat;
+	Data.User.User user;
+
+	public List<Message> LocalMessage = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		user = await userService.GetUserByIdAsync(UserId.ToString());
+		var waifu = await waifuService.GetWaifuByIdAsync(WaifuId);
+
+		userDisplayName = user.DisplayName;
+		waifuName = waifu.Name;
+		waifuImageUrl = waifu.ImageUrl;
+		chat = await chatService.OpenChatAsync(user, waifu);
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			// Scroll to the bottom of the chat window after rendering
+			await JSRuntime.InvokeVoidAsync("scrollToBottom");
+		}
+	}
+
+	[JSInvokable] // Allows the C# method to be invoked from JavaScript
+	public async Task ScrollToBottom()
+	{
+		await JSRuntime.InvokeVoidAsync("scrollToBottomJS");
+	}
+
+	async Task SendMessageAsync()
+	{
+		if (!string.IsNullOrEmpty(newMessageText))
+		{
+			isSending = true;
+
+			var message = chatService.CreateMessage(chat, UserId.ToString(), newMessageText);
+			LocalMessage.Add(message);
+			newMessageText = ""; // Clear the input field after sending the message
+			await chatService.AppendChatAsync(chat.ChatId, UserId.ToString(), message);
+			LocalMessage.Remove(message);
+
+			var reply = await chatService.CreateReplyMessageAsync(chat, WaifuId.ToString(), "");
+			await chatService.AppendChatAsync(chat.ChatId, WaifuId.ToString(), reply);
+			await waifuService.IncrementScore(chat.Waifu, 1);
+			await userService.IncrementRizz(user, 1);
+
+			await JSRuntime.InvokeVoidAsync("scrollToBottom");
+
+			isSending = false;
+		}
+	}
+
+	async Task GenerateMemoryAsync()
+	{
+		if (!isSending)
+		{
+			isSending = true;
+
+			await memoryService.GenerateMemoryAsync(chat);
+
+			isSending = false;
+		}
+	}
+}

@@ -1,0 +1,64 @@
+﻿@page "/login"
+
+@using System.ComponentModel.DataAnnotations;
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Identity;
+@using Waifustasia.Data.Authentication
+
+@inject NavigationManager NavigationManager
+@inject WaifustasiaAuthenticationStateProvider WaifustasiaAuthenticationStateProvider
+
+<h3>Login</h3>
+
+@if (!IsUserAuthenticated)
+{
+    <EditForm Model="@loginModel" OnValidSubmit="LoginUser">
+        <DataAnnotationsValidator />
+
+        <div>
+            <label for="InputEmail">Email</label>
+            <InputText id="InputEmail" @bind-Value="@loginModel.Email" />
+            <ValidationMessage For="@(() => loginModel.Email)" />
+        </div>
+
+        <div>
+            <label for="InputPassword">Password</label>
+            <InputText id="InputPassword" type="password" @bind-Value="@loginModel.Password" />
+            <ValidationMessage For="@(() => loginModel.Password)" />
+        </div>
+
+        <button type="submit">Login</button>
+    </EditForm>    
+    @if (loginFailed)
+    {
+        <p style="color: red;">Login failed. Please check your credentials.</p>
+    }
+}
+else
+{
+    <p>You are already logged in.</p>
+}
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+    private bool IsUserAuthenticated => WaifustasiaAuthenticationStateProvider.IsAuthenticated();
+    private bool loginFailed = false;
+
+    private async Task LoginUser()
+    {
+        await WaifustasiaAuthenticationStateProvider.LoginAsync(loginModel.Email, loginModel.Password);
+
+        loginFailed = !IsUserAuthenticated;
+    }
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Password is required")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+    }
+}

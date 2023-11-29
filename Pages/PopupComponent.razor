@@ -1,0 +1,16 @@
+﻿<div class="popup" style="display: @(showPopup ? "block" : "none")">
+    <div class="popup-content">
+        <p>@message</p>
+        <button @onclick="ClosePopup">Close</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string message { get; set; }
+    private bool showPopup = true;
+
+    private void ClosePopup()
+    {
+        showPopup = false;
+    }
+}

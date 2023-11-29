@@ -1,0 +1,88 @@
+﻿@page "/"
+@inject IJSRuntime JSRuntime
+@using Waifustasia.Data.Waifu;
+
+<div>
+	<button @onclick="LoadFollowedWaifuMemories" class="@($"{(selectedFeed == FeedType.ForYou ? "active" : "")}")">For You</button>
+	<button @onclick="LoadPublicMemories" class="@($"{(selectedFeed == FeedType.Public ? "active" : "")}")">Public</button>
+</div>
+
+@if(selectedFeed == FeedType.Public)
+{
+	<Waifustasia.Pages.Memory.PublicMemoryFeedComponent></Waifustasia.Pages.Memory.PublicMemoryFeedComponent>
+} else
+{
+	<Waifustasia.Pages.Memory.ForYouMemoryFeedComponent></Waifustasia.Pages.Memory.ForYouMemoryFeedComponent>
+}
+
+<AuthorizeView>
+	<Authorized>
+		<button @onclick="NavigateToNewWaifuPage">Create New Waifu</button> <!-- Added button for navigation -->
+	</Authorized>
+</AuthorizeView>
+
+<style>
+	/* Define the active style for the button */
+	button.active {
+		background-color: #4CAF50; /* Change to the color you want */
+		color: white;
+		/* Add other styles to denote the active state */
+	}
+
+	/* Other button styles */
+	button {
+		background-color: #f2f2f2;
+		border: none;
+		color: black;
+		padding: 10px 20px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 16px;
+		margin: 4px 2px;
+		cursor: pointer;
+		/* Add other button styles */
+	}
+</style>
+
+@code {
+	[Inject] Waifustasia.Data.Authentication.WaifustasiaAuthenticationStateProvider WaifustasiaAuthenticationStateProvider { get; set; }
+	[Inject] NavigationManager navigationManager { get; set; }
+
+	enum FeedType
+	{
+		ForYou,
+		Public
+	}
+	FeedType selectedFeed = FeedType.ForYou;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var user = WaifustasiaAuthenticationStateProvider.CurrentUser;
+		if (user == null)
+		{
+			LoadPublicMemories();
+		}
+		else
+		{
+			LoadFollowedWaifuMemories();
+		}
+	}
+
+	async Task LoadFollowedWaifuMemories()
+	{
+		selectedFeed = FeedType.ForYou; // Set the selected feed
+		StateHasChanged();
+	}
+
+	async Task LoadPublicMemories()
+	{
+		selectedFeed = FeedType.Public; // Set the selected feed
+		StateHasChanged();
+	}
+
+	async Task NavigateToNewWaifuPage()
+	{
+		navigationManager.NavigateTo("/waifus/new"); // Navigate to the specified page
+	}
+}

@@ -1,0 +1,55 @@
+﻿@using System.Threading.Tasks
+
+@if (User != null)
+{
+    <button @onclick="ToggleFollow">
+        @if (IsFollowing)
+        {
+            <span>Unfollow</span>
+        }
+        else
+        {
+            <span>Follow</span>
+        }
+    </button>
+}
+
+@code {
+    [Inject] Waifustasia.Data.User.IUserService userService { get; set; }
+    [Inject] Waifustasia.Data.Authentication.WaifustasiaAuthenticationStateProvider WaifustasiaAuthenticationStateProvider { get; set; }
+    [Parameter] public bool IsFollowing { get; set; }
+    [Parameter] public EventCallback<bool> IsFollowingChanged { get; set; }
+    [Parameter] public Waifustasia.Data.Waifu.Waifu WaifuToFollow { get; set; }
+    [Parameter] public Waifustasia.Data.User.User User { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = WaifustasiaAuthenticationStateProvider.CurrentUser;
+        await Updatefollowing();
+    }
+
+    async Task Updatefollowing()
+    {
+        if (User == null) { return; }
+        //IsFollowing = User.FollowedWaifus.Any(x => x.Waifu == WaifuToFollow);
+
+        IsFollowing = await userService.GetFollowStatusAsync(User.Id, WaifuToFollow.Id);
+        StateHasChanged();
+    }
+
+    private async Task ToggleFollow()
+    {
+        if (!IsFollowing)
+        {
+            await userService.FollowByIdAync(User.Id, WaifuToFollow.Id);
+        }
+        else
+        {
+            await userService.UnFollowByIdAync(User.Id, WaifuToFollow.Id);
+        }
+
+        await IsFollowingChanged.InvokeAsync(IsFollowing);
+
+        await Updatefollowing();
+    }
+}

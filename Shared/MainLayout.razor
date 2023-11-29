@@ -1,0 +1,78 @@
+﻿@using Waifustasia.Data.Authentication;
+@using Waifustasia.Data.User;
+@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject WaifustasiaAuthenticationStateProvider WaifustasiaAuthenticationStateProvider
+@implements IDisposable
+
+
+<PageTitle>Waifustasia</PageTitle>
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <AuthorizeView>
+                <Authorized>
+                    <a href="/account-detail/@currentUser?.Id.ToString()">Authorized as @currentUser?.DisplayName (@currentUser?.Email)</a>
+                    <span> / </span>
+                    <a href="/logout">Logout</a>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/create-account">Register</a>
+                    <span> / </span>
+                    <a href="/login">Login</a>
+
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    User currentUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentUser = WaifustasiaAuthenticationStateProvider.CurrentUser;
+        StateHasChanged();
+        WaifustasiaAuthenticationStateProvider.AuthenticationStateChanged += WaifustasiaAuthenticationStateProvider_AuthenticationStateChanged;
+        WaifustasiaAuthenticationStateProvider.CurrentUserChanged += WaifustasiaAuthenticationStateProvider_CurrentUserChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Perform JavaScript interop call only on the first render
+            var what = await WaifustasiaAuthenticationStateProvider.GetAuthenticationStateAsync();
+            currentUser = WaifustasiaAuthenticationStateProvider.CurrentUser;
+            StateHasChanged();
+        }
+    }
+
+    public void WaifustasiaAuthenticationStateProvider_CurrentUserChanged(object sender, UserChangedEventArgs args)
+    {
+        currentUser = WaifustasiaAuthenticationStateProvider.CurrentUser;
+        StateHasChanged();
+    }
+
+    private async void WaifustasiaAuthenticationStateProvider_AuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        currentUser = WaifustasiaAuthenticationStateProvider.CurrentUser;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        WaifustasiaAuthenticationStateProvider.AuthenticationStateChanged -= WaifustasiaAuthenticationStateProvider_AuthenticationStateChanged;
+        WaifustasiaAuthenticationStateProvider.CurrentUserChanged -= WaifustasiaAuthenticationStateProvider_CurrentUserChanged;
+    }
+}

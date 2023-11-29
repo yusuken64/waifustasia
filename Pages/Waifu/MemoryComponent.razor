@@ -1,0 +1,50 @@
+﻿<style>
+	.memory-item {
+		max-width: 250px;
+		max-height: fit-content; /* Adjust to fit the content */
+		overflow: hidden;
+		text-align: center;
+		padding: 5px;
+		box-sizing: border-box;
+		margin-bottom: 20px; /* Add margin between memory items */
+	}
+
+	.memory-item img {
+		width: 100%;
+		height: auto;
+		display: block;
+		margin: auto;
+	}
+
+	.memory-description {
+		margin-top: 10px;
+		overflow: auto; /* Enable scroll if description exceeds */
+		max-height: 150px; /* Adjust max height for the description */
+		padding: 5px; /* Add padding for better readability */
+		box-sizing: border-box;
+	}
+</style>
+
+<div class="memory-item">
+	<img src="@Memory.MemoryImageUrl" alt="@Memory.MemoryDescription" @onclick="NavigateToMemoryDetails" style="cursor: pointer;">
+
+	@if (@ShowText)
+	{
+		<div class="memory-description">
+			@Memory.MemoryDescription
+		</div>
+	}
+</div>
+
+@code {
+	[Parameter] public Waifustasia.Data.Memory.Memory Memory { get; set; }
+	[Parameter] public bool ShowText { get; set; }
+
+	[Inject]
+	public NavigationManager NavigationManager { get; set; }
+
+	private void NavigateToMemoryDetails()
+	{
+		NavigationManager.NavigateTo($"/MemoryDetails/{Memory.Id}"); // Replace Memory.Id with the actual ID property
+	}
+}

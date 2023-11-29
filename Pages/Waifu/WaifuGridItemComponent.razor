@@ -1,0 +1,27 @@
+﻿<div class="card" style="width: 400px;"> <!-- Adjust the width as needed -->
+	<div class="d-inline-block" style="width: 200px;"> <!-- Set the width for the image div -->
+		<a href="#" @onclick="OpenMemoriesWithWaifu">
+			<img src="@Waifu.ImageUrl" class="card-img" alt="Waifu Image" style="width: 200px; height: 200px;">
+		</a>
+	</div>
+	<div class="d-inline-block" style="width: 200px;"> <!-- Set the width for the title div -->
+		<h5 class="card-title">@Waifu.Name</h5>
+	</div>
+</div>
+
+@code {
+	[Inject] NavigationManager navigationManager { get; set; }
+	[Inject] Waifustasia.Data.Authentication.WaifustasiaAuthenticationStateProvider WaifustasiaAuthenticationStateProvider { get; set; }
+	[Parameter] public Waifustasia.Data.Waifu.Waifu Waifu { get; set; }
+
+	void OpenChatWithWaifu()
+	{
+		var userId = WaifustasiaAuthenticationStateProvider.CurrentUser?.Id;
+		navigationManager.NavigateTo($"/chat/{userId}/{Waifu.Id}");
+	}
+
+	void OpenMemoriesWithWaifu()
+	{
+		navigationManager.NavigateTo($"/Memories/{Waifu.Id}");
+	}
+}

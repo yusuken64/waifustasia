@@ -1,0 +1,80 @@
+﻿@page "/Memories/{waifuId}"
+@using Waifustasia.Data.Memory;
+@using Waifustasia.Data.Waifu;
+
+<h3>Memories for @displayedWaifu?.Name</h3>
+
+@if (displayedWaifu != null)
+{
+    <img src="@displayedWaifu.ImageUrl" alt="@displayedWaifu.Name" style="max-width: 250px; height: auto; margin-bottom: 20px;" />
+
+    <div>
+        <p>@displayedWaifu.ProfileDescription</p>
+        <button class="btn btn-primary" @onclick="OpenChatWithWaifu">Open Chat</button>
+        <p><strong>Score:</strong> @displayedWaifu.Score</p>
+        <p><strong>Followers:</strong> @followerCount</p>
+        <FollowButtonComponent WaifuToFollow="displayedWaifu"></FollowButtonComponent>
+        <p><strong>Memories Count:</strong> @memories.Count</p>
+    </div>
+
+    @if (memories != null && memories.Any())
+    {
+        <div class="memory-grid">
+            @foreach (var memory in memories)
+            {
+                <MemoryComponent Memory="memory" ShowText="true" />
+            }
+        </div>
+    }
+    else
+    {
+        <p>No memories found for @displayedWaifu.Name</p>
+    }
+}
+else
+{
+    <p>Waifu not found</p>
+}
+
+<style>
+    .memory-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .memory-item {
+        flex: 0 0 auto;
+        width: calc(33.33% - 10px); /* Adjust width as needed */
+        max-width: calc(33.33% - 10px); /* Adjust max-width as needed */
+        margin-bottom: 10px;
+        text-align: left;
+        box-sizing: border-box;
+    }
+</style>
+
+@code {
+    [Parameter] public string waifuId { get; set; }
+    [Inject] public IWaifuService WaifuService { get; set; }
+    [Inject] public IMemoryService MemoryService { get; set; }
+    [Inject] NavigationManager navigationManager { get; set; }
+    [Inject] Waifustasia.Data.Authentication.WaifustasiaAuthenticationStateProvider WaifustasiaAuthenticationStateProvider { get; set; }
+
+
+    Waifustasia.Data.Waifu.Waifu displayedWaifu;
+    List<Waifustasia.Data.Memory.Memory> memories;
+    int followerCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        displayedWaifu = await WaifuService.GetWaifuByIdAsync(waifuId);
+        memories = await MemoryService.GetMemoriesByWaifuId(waifuId.ToString());
+        followerCount = await WaifuService.GetFollowerCountAsync(waifuId.ToString());
+    }
+
+    void OpenChatWithWaifu()
+    {
+        var userId = WaifustasiaAuthenticationStateProvider.CurrentUser?.Id;
+        navigationManager.NavigateTo($"/chat/{userId}/{displayedWaifu.Id}");
+    }
+}

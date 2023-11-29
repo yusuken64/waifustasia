@@ -1,0 +1,136 @@
+﻿@page "/MemoryDetails/{memoryId}"
+@using Waifustasia.Data.Memory
+@using Waifustasia.Data.User;
+@inject IMemoryService MemoryService
+
+@if (memory != null)
+{
+    <h3>@memory?.Waifu.Name</h3>
+    <a href="/Memories/@memory?.Waifu.Id">
+        <img src="@memory?.Waifu.ImageUrl" alt="@memory?.Waifu.Name" style="max-width: 200px; height: auto;"> <!-- Waifu image -->
+    </a>
+    <p><strong>Memory with </strong> <a href="/account-detail/@memory.MemoryUser.Id">@memory.MemoryUser.DisplayName</a></p>
+
+    <div class="memory-details">
+        <img src="@memory.MemoryImageUrl" alt="@memory.MemoryDescription" style="max-width: 500px; height: auto;">
+        <div class="memory-description">
+            <p>@memory.MemoryDescription</p>
+            <div>
+                <strong>
+                    <span class="heart @(liked ? "filled" : "")" @onclick="LikeMemory" style="cursor: pointer;"></span>:
+                </strong>
+                @memory.Likes
+                <strong>Views:</strong> @memory.Views
+            </div>
+
+            @if (showPopup)
+            {
+                <div class="popup">
+                    <div class="popup-content">
+                        <p>@popupMessage</p>
+                        <button @onclick="ClosePopup">Close</button>
+                    </div>
+                </div>
+            }
+
+        </div>
+        <footer class="memory-footer">
+            <small>Created: @memory.CreationDate.ToString("MMMM dd, yyyy")</small>
+        </footer>
+    </div>
+}
+else
+{
+    <p>Memory not found</p>
+}
+
+<style>
+    .heart {
+        color: red;
+        cursor: pointer;
+        font-size: 100px;
+    }
+    .heart::before {
+        content: '\2661';
+    }
+    .heart.filled::before {
+        content: '\2665';
+    }
+</style>
+
+@code {
+    [Parameter] public string memoryId { get; set; }
+    [Inject] Data.User.IUserService userService { get; set; }
+    [Inject] Waifustasia.Data.Authentication.WaifustasiaAuthenticationStateProvider WaifustasiaAuthenticationStateProvider { get; set; }
+    Memory memory;
+    User currentUser;
+    bool liked;
+
+    private bool showPopup = false;
+    private string popupMessage = "You must be logged in to like this memory.";
+
+    protected override async Task OnInitializedAsync()
+    {
+        memory = await MemoryService.GetMemoryByIdAsync(memoryId);
+        if (memory != null)
+        {
+            await MemoryService.IncrementViewsAsync(memory);
+            await MemoryService.LoadMemoryUserAsync(memory);
+        }
+
+        currentUser = WaifustasiaAuthenticationStateProvider.CurrentUser;
+        if (currentUser != null)
+        {
+            liked = await PreviouslyLiked(currentUser.Id);
+        }
+        else
+        {
+            liked = false;
+        }
+    }
+
+    private async Task LikeMemory()
+    {
+        if (currentUser == null)
+        {
+            ShowLoginPopup();
+            return;
+        }
+
+        var hasLikedMemory = await userService.HasLikedMemory(currentUser.Id, memoryId);
+        if (!hasLikedMemory)
+        {
+            await userService.AddLikedMemory(currentUser.Id, memoryId);
+            await MemoryService.LikeMemoryAsync(memory);
+            memory = await MemoryService.GetMemoryByIdAsync(memoryId);
+
+            liked = true;
+        }
+    }
+    private void ShowLoginPopup()
+    {
+        showPopup = true;
+    }
+
+    private void ClosePopup()
+    {
+        showPopup = false;
+    }
+
+    public async Task<bool> CanLike()
+    {
+        var currentUser = WaifustasiaAuthenticationStateProvider.CurrentUser;
+        if (currentUser != null)
+        {
+            var previouslyLiked = await PreviouslyLiked(currentUser.Id);
+            return !previouslyLiked;
+        }
+        return false;
+    }
+
+    public async Task<bool> PreviouslyLiked(string userId)
+    {
+        var previouslyLiked = await userService.HasLikedMemory(userId, memoryId);
+        return previouslyLiked;
+    }
+}

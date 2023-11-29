@@ -1,0 +1,29 @@
+﻿version: "3.9"
+
+services:
+  webapp:
+    image: mcr.microsoft.com/dotnet/aspnet:6.0
+    ports:
+      - "8000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    volumes:
+      - ./Waifustasia:/app
+    depends_on:
+      - database
+    command: ["dotnet", "Waifustasia.dll"]
+
+  database:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_DATABASE: "waifustasia"
+      MYSQL_USER: "admin"
+      MYSQL_PASSWORD: "password123"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

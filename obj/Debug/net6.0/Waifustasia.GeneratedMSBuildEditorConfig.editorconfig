@@ -1,0 +1,121 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Waifustasia
+build_property.RootNamespace = Waifustasia
+build_property.ProjectDir = C:\Users\yusuk\source\repos\Waifustasia\Waifustasia\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\yusuk\source\repos\Waifustasia\Waifustasia
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Account/AccountDetail.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWNjb3VudFxBY2NvdW50RGV0YWlsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Account/CreateAccount.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWNjb3VudFxDcmVhdGVBY2NvdW50LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Account/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWNjb3VudFxMb2dpbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Account/Logout.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWNjb3VudFxMb2dvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Chat.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2hhdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Memory/ForYouMemoryFeedComponent.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWVtb3J5XEZvcllvdU1lbW9yeUZlZWRDb21wb25lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Memory/PublicMemoryFeedComponent.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWVtb3J5XFB1YmxpY01lbW9yeUZlZWRDb21wb25lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/PopupComponent.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUG9wdXBDb21wb25lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/User.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXNlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Waifu/FollowButtonComponent.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcV2FpZnVcRm9sbG93QnV0dG9uQ29tcG9uZW50LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Waifu/Memories.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcV2FpZnVcTWVtb3JpZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Waifu/MemoryComponent.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcV2FpZnVcTWVtb3J5Q29tcG9uZW50LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Waifu/MemoryDetails.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcV2FpZnVcTWVtb3J5RGV0YWlscy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Waifu/NewWaifu.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcV2FpZnVcTmV3V2FpZnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Waifu/Waifu.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcV2FpZnVcV2FpZnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Waifu/WaifuGridItemComponent.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcV2FpZnVcV2FpZnVHcmlkSXRlbUNvbXBvbmVudC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Shared/SurveyPrompt.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1cnZleVByb21wdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-vg0mk1jn9o
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Shared/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-epumpkyh9p
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/_Host.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0xheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/yusuk/source/repos/Waifustasia/Waifustasia/Pages/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZhbGlkYXRpb25TY3JpcHRzUGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

@@ -1,0 +1,35 @@
+﻿@page "/waifu"
+@using Waifustasia.Data.Waifu;
+
+<PageTitle>Waifu</PageTitle>
+
+@inject IWaifuService WaifuService
+
+<h3>Waifu</h3>
+
+@if (waifus == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<div class="row">
+		@foreach (var waifu in waifus)
+		{
+			<div class="col-md-4 mb-3">
+				<WaifuGridItemComponent Waifu="waifu"></WaifuGridItemComponent>
+			</div>
+		}
+	</div>
+}
+
+@code {
+	[Inject] NavigationManager navigationManager { get; set; }
+	[Inject] Waifustasia.Data.Authentication.WaifustasiaAuthenticationStateProvider WaifustasiaAuthenticationStateProvider { get; set; }
+	private Data.Waifu.Waifu[]? waifus;
+
+	protected override async Task OnInitializedAsync()
+	{
+		waifus = (await WaifuService.GetWaifusAsync()).ToArray();
+	}
+}

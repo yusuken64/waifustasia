@@ -1,0 +1,81 @@
+﻿@inject IJSRuntime JSRuntime
+
+<AuthorizeView>
+	<Authorized>
+		@if (memories != null && memories.Any())
+		{
+			<div class="memory-feed" @ref="memoryFeed">
+				<div class="memory-list">
+					@foreach (var memory in memories)
+					{
+						<div class="memory-item">
+							<Waifustasia.Pages.Waifu.MemoryComponent Memory="memory" />
+						</div>
+					}
+				</div>
+			</div>
+		}
+		else
+		{
+			<p>No waifus found!</p>
+		}
+	</Authorized>
+	<NotAuthorized>
+		<p>Login to see your For You feed.</p>
+	</NotAuthorized>
+</AuthorizeView>
+
+<style>
+	.memory-feed {
+		display: flex;
+	}
+
+	.memory-list {
+		display: flex;
+		flex-wrap: wrap; /* Ensure items stay in a single row */
+	}
+
+	.memory-item {
+		flex: 0 0 auto; /* Maintain the item's size */
+		margin-right: 10px; /* Adjust spacing between items */
+	}
+</style>
+
+@code {
+	[Inject] Waifustasia.Data.Authentication.WaifustasiaAuthenticationStateProvider WaifustasiaAuthenticationStateProvider { get; set; }
+	[Inject] Data.Memory.IMemoryService memoryService { get; set; }
+
+	Data.User.User user;
+	int pageIndex = 0;
+	int pageSize = 20;
+
+	ElementReference memoryFeed;
+	List<Data.Memory.Memory> memories = new();
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		user = WaifustasiaAuthenticationStateProvider.CurrentUser;
+		if (firstRender)
+		{
+			await LoadMoreMemories();
+			AddScrollListener();
+		}
+	}
+
+	private void AddScrollListener()
+	{
+		var window = DotNetObjectReference.Create(this);
+		var js = $"window.addEventListener('scroll', function() {{if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {{{window}.invokeMethodAsync('LoadMoreMemories');}}}});";
+		JSRuntime.InvokeVoidAsync("eval", js);
+	}
+
+	[JSInvokable]
+	public async Task LoadMoreMemories()
+	{
+		List<Data.Memory.Memory> moreMemories;
+		moreMemories = await memoryService.GetMemoryFeedAsync(user, pageIndex, pageSize);
+		pageIndex++;
+		memories.AddRange(moreMemories);
+		StateHasChanged();
+	}
+}

@@ -1,0 +1,124 @@
+﻿@page "/account-detail/{displayedUserId}"
+
+@using Waifustasia.Data.User;
+@using Waifustasia.Data.Memory;
+@using Waifustasia.Pages.Waifu
+<h3>AccountDetail</h3>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Display Name</th>
+			<th>Role</th>
+			<th>Email</th>
+			<th>Coin</th>
+			<th>Rizz</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				@if (currentUser?.Id == displayedUserId)
+				{
+					<input type="text" @bind="@displayName" />
+					@if (displayName != committedDisplayName)
+					{
+						<button @onclick="UpdateDisplayName">Update</button>
+					}
+				}
+				else
+				{
+					@displayedUser?.DisplayName
+				}
+			</td>
+			<td>
+				<AuthorizeView Roles="Admin">
+					<Authorized>
+						<div>
+							<label for="roleSelect">Role:</label>
+							@if (displayedUser != null &&
+								displayedUser.Role != "Admin")
+							{
+								<select id="roleSelect" @bind="displayedUser.Role">
+									@foreach (var role in rolesList)
+									{
+										<option value="@role">@role</option>
+									}
+								</select>
+							}
+						</div>
+
+						<button @onclick="UpdateUserRole">Update Role</button>
+					</Authorized>
+					<NotAuthorized>
+						@displayedUser?.Role
+					</NotAuthorized>
+				</AuthorizeView>
+			</td>
+			<td>@displayedUser?.Email</td>
+			<td>@displayedUser?.Coin</td>
+			<td>@displayedUser?.Rizz</td>
+		</tr>
+	</tbody>
+</table>
+
+<h4>Liked Memories</h4>
+<div style="display: flex; flex-wrap: wrap;">
+	@if (displayedUser?.LikedMemories != null && displayedUser.LikedMemories.Any())
+	{
+		@foreach (var memory in displayedUser.LikedMemories)
+		{
+			<MemoryComponent Memory="memory" ShowText="false" />
+		}
+	}
+	else
+	{
+		<p>No liked memories found.</p>
+	}
+</div>
+
+@code {
+	[Parameter] public string displayedUserId { get; set; }
+
+	[Inject] Waifustasia.Data.Authentication.WaifustasiaAuthenticationStateProvider WaifustasiaAuthenticationStateProvider { get; set; }
+	[Inject] Waifustasia.Data.User.IUserService UserService { get; set; }
+
+	private User? displayedUser { get; set; }
+	private User? currentUser { get; set; }
+	private string committedDisplayName;
+	private string displayName;
+
+	protected override async Task OnInitializedAsync()
+	{
+		displayedUser = await UserService.GetUserByIdAsync(displayedUserId.ToString());
+		currentUser = WaifustasiaAuthenticationStateProvider.CurrentUser;
+		if (currentUser?.Id == displayedUserId)
+		{
+			displayName = currentUser.DisplayName;
+			committedDisplayName = currentUser.DisplayName;
+		}
+
+		displayedUser.LikedMemories = await UserService.GetLikedMemoriesAsync(displayedUserId);
+	}
+
+	private async Task UpdateDisplayName()
+	{
+		if (currentUser.Id == displayedUserId)
+		{
+			if (displayName != committedDisplayName)
+			{
+				displayedUser = await UserService.UpdateUserNameAsync(currentUser.Id, displayName);
+				committedDisplayName = displayName;
+			}
+		}
+	}
+
+	private List<string> rolesList = new List<string> { "Admin", "User", "Superuser" }; // Replace with your roles
+
+	private async Task UpdateUserRole()
+	{
+		await UserService.UpdateUserRoleAsync(displayedUser.Id, displayedUser.Role);
+
+		displayedUser = await UserService.GetUserByIdAsync(displayedUserId);
+	}
+}
