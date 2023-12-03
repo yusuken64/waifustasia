@@ -1,6 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using Newtonsoft.Json;
 using System.Text;
+using Waifustasia.Data.Authentication;
 
 namespace Waifustasia.WaifuAI.Settings
 {
@@ -12,7 +13,8 @@ namespace Waifustasia.WaifuAI.Settings
 
         public AzureSettingStore(IConfiguration configuration)
         {
-            _connectionString = configuration["AppSettings:AzureRecord:BlobConnectionString"];
+            CryptoString cryptoString = new CryptoString();
+            _connectionString = cryptoString.DecryptSettingString(configuration["AppSettings:AzureRecord:BlobConnectionString"]);
             _containerName =    configuration["AppSettings:AzureRecord:SettingContainer"];
             _settingFileName =  configuration["AppSettings:AzureRecord:SettingFileName"];
         }

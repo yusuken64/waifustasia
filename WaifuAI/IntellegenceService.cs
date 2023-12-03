@@ -1,6 +1,7 @@
 ﻿using OpenAI;
 using OpenAI.Images;
 using OpenAI.Models;
+using Waifustasia.Data.Authentication;
 using Waifustasia.Data.Chat;
 
 namespace Waifustasia.OpenAI
@@ -10,8 +11,9 @@ namespace Waifustasia.OpenAI
 		private OpenAIClient openAiClient;
 
 		public IntellegenceService(IConfiguration configuration)
-		{
-			var key = configuration["AppSettings:OpenAI:key"];
+        {
+            CryptoString cryptoString = new CryptoString();
+            var key = cryptoString.DecryptSettingString(configuration["AppSettings:OpenAI:key"]);
 			openAiClient = new OpenAIClient(key);
 		}
 

@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Waifustasia.Data.Authentication;
 
 namespace Waifustasia.WaifuAI.Imagaes
 {
@@ -9,7 +10,8 @@ namespace Waifustasia.WaifuAI.Imagaes
 
         public AzureImageStore(IConfiguration configuration)
         {
-            _connectionString = configuration["AppSettings:AzureRecord:BlobConnectionString"];
+            CryptoString cryptoString= new CryptoString();
+            _connectionString = cryptoString.DecryptSettingString(configuration["AppSettings:AzureRecord:BlobConnectionString"]);
             _containerName = configuration["AppSettings:AzureRecord:ImageContainer"];
         }
 

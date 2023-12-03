@@ -47,8 +47,9 @@ else
         .Build();
 }
 
+CryptoString cryptoString = new CryptoString();
 builder.Services.AddDbContext<WaifustasiaDbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(cryptoString.DecryptSettingString(configuration.GetConnectionString("DefaultConnection"))));
 builder.Services.AddTransient<WaifustasiaDbContext>();
 
 builder.Services.AddScoped<IWaifuRepository, WaifuRepository>();
